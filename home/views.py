@@ -29,7 +29,7 @@ class HomeView(View):
         if request.user.is_authenticated:
             for count in range(len(products)):
                 if products[count].user_can_like(request.user):
-                    can_like.append('❤')
+                    can_like.append('\u2764')
                 else:
                     can_like.append('💔')
         products = list(products)

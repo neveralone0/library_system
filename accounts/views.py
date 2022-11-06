@@ -4,10 +4,36 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegistrationForm, VerifyFormCode, UserLoginForm
-from utils import send_otp_code
 from .models import OtpCode, User
+from .serializers import BookSerializer, UserSerializer
+from utils import send_otp_code
 from home.models import BookMark, Product
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 import random
+
+
+# just for exercise api, can be deleted
+class BookAPI(APIView):
+    print(38*'*')
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        srz_obj = BookSerializer(data=request.data)
+        srz_obj.is_valid()
+        return Response({"data": srz_obj.data, 'validated_data': srz_obj.validated_data, 'errors': srz_obj.errors})
+
+
+class UserRegistrationAPI(APIView):
+    def post(self, request):
+        user_srz = UserSerializer(data=request.data)
+        if user_srz.is_valid():
+            user_srz.save()
+            # add informations to session
+            # ...
+            return Response(user_srz.data, status=status.HTTP_201_CREATED)
+        return Response(user_srz.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserRegisterView(View):

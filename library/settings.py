@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'storages',
     'django_celery_beat',
     'ckeditor',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'library.wsgi.application'
+
+# rest settings
+REST_FRAMEWORK = {
+    
+}
 
 
 # Database
