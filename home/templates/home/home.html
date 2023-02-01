@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load tag_library %}
+{% load static %}
+
+
+{% block extra_headers %}
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% for category in categories %}
+        <div class="btn-group">
+            <a href="{{ category.get_absolute_url }}" class="btn btn-primary">{{ category.name }}</a>
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+                {% for sub in category.scategory.all %}
+                <li><a class="dropdown-item" href="{{ sub.get_absolute_url }}">{{ sub.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+    <br/><br/><br/>
+        <div class="card my_card" style="width: 18rem; background-color: #bfa93e;">
+            <div class="card-body" >
+                <a class="book-container"
+                   href="{{ special_book.get_absolute_url }}"
+                   target="_blank"
+                   rel="noreferrer noopener">
+                    <div {% if special_book.pages <= 100 and special_book.pages < 200%}class="book"{% endif %}
+                         {% if special_book.pages <= 200 and special_book.pages < 300%}class="book1"{% endif %}
+                         {% if special_book.pages >= 300 %}class="book2"{% endif %}>
+                        <img alt="Book" src="{{ special_book.image.url }}"/>
+                    </div>
+                </a>
+                <br/><br/>
+                <a href="{{ special_book.get_absolute_url }}"><button type="button" class="card-title my_title center" style="border-color: #bfa93e">{{ special_book.name }}</button></a>
+
+                <a href="{% url 'home:home_post_like' special_book.slug %}" style="display: inline-block;"><button style="border-color: #bfa93e" type="button" class="card-title my_title center">
+                            {% if special_like %}❤{% else %}💔{% endif %}{{ special_book.likes_count }}</button></a>
+                <a href="{% url 'home:home_post_mark' special_book.slug %}" style="display: inline-block; width: 50px"><button style="border-color: #bfa93e" type="button" class="card-title my_title center">
+                        🔖️</button></a>
+                <a href="" style="display: inline-block; width:140px;"><button type="button" style="border-color: #bfa93e" class="card-title my_title center">
+                          Add to cart</button></a>
+            </div>
+    </div>
+    {% for product, like in products %}
+        <div class="card my_card" style="width: 18rem;">
+            <div class="card-body">
+                <a class="book-container"
+                   href="{{ product.get_absolute_url }}"
+                   target="_blank"
+                   rel="noreferrer noopener">
+                    <div {% if product.pages <= 100 and product.pages < 200%}class="book"{% endif %}
+                         {% if product.pages <= 200 and product.pages < 300%}class="book1"{% endif %}
+                         {% if product.pages >= 300 %}class="book2"{% endif %}>
+                        <img alt="Book" src="{{ product.image.url }}"/>
+                    </div>
+                </a>
+                <br/><br/>
+                    <a style="width: 30px" href="{{ product.get_absolute_url }}" style="display: inline-block"><button type="button" class="card-title my_title center">{{ product.name }}</button></a>
+                    <a href="{% url 'home:home_post_like' product.slug %}" style="display: inline-block"><button type="button" class="card-title my_title center">
+                    {{ like }}{{ product.likes_count }}</button></a>
+                <a href="{% url 'home:home_post_mark' product.slug %}" style="display: inline-block; width: 50px"><button type="button" class="card-title my_title center">
+                        🔖️</button></a>
+                <a href="" style="display: inline-block; width:140px;"><button type="button" class="card-title my_title center">
+                          Add to cart</button></a>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+

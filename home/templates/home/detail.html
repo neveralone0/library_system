@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_headers %}
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+
+{% block content %}
+    <div style="text-align: center;">
+       <h2 class="h2" style="color: #e0e0e0">{{ product.name }}</h2>
+    <small style="color: #e0e0e0">{{ product.created }}</small><br/><br/>
+        <div class="center2" style="">
+            <a class="book-container"
+               href="{{ product.get_absolute_url }}"
+               target="_blank"
+               rel="noreferrer noopener">
+                <div {% if product.pages <= 100 and product.pages < 200%}class="book"{% endif %}
+                     {% if product.pages <= 200 and product.pages < 300%}class="book1"{% endif %}
+                     {% if product.pages >= 300 %}class="book2"{% endif %}>
+                    <img alt="Book" src="{{ product.image.url }}"/>
+                </div>
+            </a>
+        </div>
+        <br/>
+    <p style="color: #e0e0e0">Description:</p>
+    <small style="color: #e0e0e0">{{ product.description|safe }}</small>
+    <br/>
+    <p style="color: #e0e0e0">Pages: {{ product.pages }}</p>
+
+
+    <p style="color: #e0e0e0">price: {{ product.price }} Toman</p>
+
+        {% if request.user.is_authenticated %}
+            <form action="{% url 'orders:cart_add' product.id %}" method="post" style="color: #e0e0e0">
+                {% csrf_token %}
+                {{ form }}
+                <br/><br/>
+                <input class="btn btn-success" type="submit" value="add to cart">
+            </form>
+            <br/>
+            <a style="margin-bottom: 5px" href="{% url 'home:post_like' product.slug %}"
+            class="{% if can_like %}btn btn-warning{% else %}btn btn-primary{% endif %} col-md-1">
+            {% if can_like %}Dislike{% else %}Like{% endif %}{{ product.likes_count }}
+            </a>
+    {% endif %}
+
+    </div>
+    <div>
+    <br/><br/><br/><br/><br/><br/>
+        <div style="padding: 60px;border-radius: 30px; background-color: #e0e0e0;">
+            <h3>comments:</h3>
+            {% if request.user.is_authenticated %}
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="send">
+                </form>
+                <br/>
+            {% else %}
+                <p class="alert alert-danger">login to send comments</p>
+            {% endif %}
+            <br/>
+            {% for comment in comments %}
+                <div class="card bg-dark text-white" style="border-radius: 20px">
+                    <p class="card-header">{{ comment.user }} | {{ comment.created|timesince }}</p>
+                    <p class="card-body">{{ comment.body }}</p>
+                    {% if request.user.is_authenticated %}
+                        <form style="margin-left: 40px" action="{% url 'home:add_reply' product.id comment.id %}" method="post">
+                            {% csrf_token %}
+                            {{ reply_form }}
+                            <input type="submit" value="send">
+                            <br/><br/>
+                        </form>
+                    {% endif %}
+                    {% with replies=comment.rcomments.all%}
+                        {% for reply in replies %}
+                            <p style="border-radius: 10px" class="bg-primary p-3 m-2">{{ reply.user }} - {{ reply.body }}<br/></p>
+                        {% endfor %}
+                    {% endwith %}
+                    <br/>
+                </div>
+                <br/>
+            {% empty %}
+                <p>no comments yet ):</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

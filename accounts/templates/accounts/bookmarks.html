@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_headers %}
+<link rel="stylesheet" href="{% static 'home/css/style.css' %}">
+{% endblock %}
+
+{% block content %}
+    {% for product in bookmarks %}
+        <div class="card my_card" style="width: 18rem;">
+            <div class="card-body">
+                <a class="book-container"
+                   href="{{ product.get_absolute_url }}"
+                   target="_blank"
+                   rel="noreferrer noopener">
+                    <div {% if product.pages <= 100 and product.pages < 200%}class="book"{% endif %}
+                         {% if product.pages <= 200 and product.pages < 300%}class="book1"{% endif %}
+                         {% if product.pages >= 300 %}class="book2"{% endif %}>
+                        <img alt="Book" src="{{ product.image.url }}"/>
+                    </div>
+                </a>
+                <br/><br/>
+                    <a style="width: 30px" href="{{ product.get_absolute_url }}" style="display: inline-block"><button type="button" class="card-title my_title center">{{ product.name }}</button></a>
+                <a href="{% url 'accounts:profile_bookmark' product.slug %}" style="display: inline-block; width: 50px"><button type="button" class="card-title my_title center">
+                        🔖️</button></a>
+                <a href="" style="display: inline-block; width:140px;"><button type="button" class="card-title my_title center">
+                          Add to cart</button></a>
+            </div>
+        </div>
+    {% endfor %}
+
+{% endblock %}
